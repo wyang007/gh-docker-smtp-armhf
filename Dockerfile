@@ -1,6 +1,6 @@
-FROM debian:jessie
+FROM lsiobase/xenial.armhf
 
-MAINTAINER Oluwaseun Obajobi "oluwaseun.obajobi@namshi.com"
+MAINTAINER laouache "gh-laouache@tovar.fr"
 
 RUN apt-get update && \
     apt-get install -y exim4-daemon-light && \
