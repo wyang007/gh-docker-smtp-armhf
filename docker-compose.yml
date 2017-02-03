@@ -1,6 +1,9 @@
-smtp:
-  name: gh-docker-smtp-armhf
+version: '2'
+services:
+ smtp:
+  container_name: gh-docker-smtp-armhf
   build: .
+  restart: unless-stopped
   ports:
    - "25:25"
   environment:
