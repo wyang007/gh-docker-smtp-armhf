@@ -1,5 +1,4 @@
-# Docker-SMTP
-[![](https://images.microbadger.com/badges/image/namshi/smtp.svg)](https://microbadger.com/images/namshi/smtp)
+# Docker-SMTP for Raspberry Pi 2 or 3 or armhf arch
 
 This is a SMTP docker container for sending emails. You can also relay emails to gmail and amazon SES.
 
