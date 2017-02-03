@@ -1,8 +1,10 @@
 smtp:
+  name: gh-docker-smtp-armhf
   build: .
   ports:
    - "25:25"
   environment:
+    RELAY_NETWORKS: ":192.168.0.0/24:10.0.0.0/16"
     GMAIL_USER:
     GMAIL_PASSWORD:
     SES_USER:
