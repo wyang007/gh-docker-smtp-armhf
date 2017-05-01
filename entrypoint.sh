@@ -10,7 +10,7 @@ if [ "$KEY_PATH" -a "$CERTIFICATE_PATH" ]; then
 	if [ "$MAILNAME" ]; then
 	  echo "MAIN_TLS_ENABLE = yes" >>  /etc/exim4/exim4.conf.localmacros
 	else
-		echo "MAIN_TLS_ENABLE = yes" >  /etc/exim4/exim4.conf.localmacros
+	  echo "MAIN_TLS_ENABLE = yes" >>  /etc/exim4/exim4.conf.localmacros
 	fi
 	cp $KEY_PATH /etc/exim4/exim.key
 	cp $CERTIFICATE_PATH /etc/exim4/exim.crt
@@ -23,8 +23,12 @@ fi
 opts=(
 	dc_local_interfaces "[0.0.0.0]:${PORT:-25} ; [::0]:${PORT:-25}"
 	dc_other_hostnames ''
-	dc_relay_nets "$(ip addr show dev eth0 | awk '$1 == "inet" { print $2 }')${RELAY_NETWORKS}"
+	dc_relay_nets "$(ip addr show dev eth0 | awk '$1 == "inet" { print $2 }' | xargs | sed 's/ /:/g')${RELAY_NETWORKS}"
 )
+
+if [ "$DISABLE_IPV6" ]; then 
+        echo 'disable_ipv6=true' >> /etc/exim4/exim4.conf.localmacros
+fi
 
 if [ "$GMAIL_USER" -a "$GMAIL_PASSWORD" ]; then
 	opts+=(
@@ -60,6 +64,11 @@ else
 	opts+=(
 		dc_eximconfig_configtype 'internet'
 	)
+fi
+
+# allow to add additional macros by bind-mounting a file
+if [ -f /etc/exim4/_docker_additional_macros ]; then
+	cat /etc/exim4/_docker_additional_macros >> /etc/exim4/exim4.conf.localmacros
 fi
 
 /bin/set-exim4-update-conf "${opts[@]}"
