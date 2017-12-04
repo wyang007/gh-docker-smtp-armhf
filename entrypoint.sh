@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Initialize localmacros as an empty file
+echo -n "" > /etc/exim4/exim4.conf.localmacros
+
 if [ "$MAILNAME" ]; then
 	echo "MAIN_HARDCODE_PRIMARY_HOSTNAME = $MAILNAME" > /etc/exim4/exim4.conf.localmacros
 	echo $MAILNAME > /etc/mailname
@@ -39,22 +42,24 @@ if [ "$GMAIL_USER" -a "$GMAIL_PASSWORD" ]; then
 elif [ "$SES_USER" -a "$SES_PASSWORD" ]; then
 	opts+=(
 		dc_eximconfig_configtype 'smarthost'
-		dc_smarthost "email-smtp.${SES_REGION:=us-east-1}.amazonaws.com::587"
+		dc_smarthost "email-smtp.${SES_REGION:=us-east-1}.amazonaws.com::${SES_PORT:=587}"
 	)
 	echo "*.amazonaws.com:$SES_USER:$SES_PASSWORD" > /etc/exim4/passwd.client
 # Allow to specify an arbitrary smarthost.
 # Parameters: SMARTHOST_USER, SMARTHOST_PASSWORD: authentication parameters
 # SMARTHOST_ALIASES: list of aliases to puth auth data for (semicolon separated)
 # SMARTHOST_ADDRESS, SMARTHOST_PORT: connection parameters.
-elif [ "$SMARTHOST_USER" -a "$SMARTHOST_PASSWORD" ] && [ "$SMARTHOST_ALIASES" -a "$SMARTHOST_ADDRESS" ] ; then
+elif [ "$SMARTHOST_ADDRESS" ] ; then
 	opts+=(
 		dc_eximconfig_configtype 'smarthost'
 		dc_smarthost "${SMARTHOST_ADDRESS}::${SMARTHOST_PORT-25}"
 	)
 	rm -f /etc/exim4/passwd.client
-	echo "$SMARTHOST_ALIASES;" | while read -d ";" alias; do
-	  echo "${alias}:$SMARTHOST_USER:$SMARTHOST_PASSWORD" >> /etc/exim4/passwd.client
-	done
+	if [ "$SMARTHOST_ALIASES" -a "$SMARTHOST_USER" -a "$SMARTHOST_PASSWORD" ] ; then
+		echo "$SMARTHOST_ALIASES;" | while read -d ";" alias; do
+			echo "${alias}:$SMARTHOST_USER:$SMARTHOST_PASSWORD" >> /etc/exim4/passwd.client
+		done
+	fi
 elif [ "$RELAY_DOMAINS" ]; then
 	opts+=(
 		dc_relay_domains "${RELAY_DOMAINS}"
