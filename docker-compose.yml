@@ -1,0 +1,19 @@
+version: '2'
+services:
+ smtp:
+  container_name: gh-docker-smtp-armhf
+  build: .
+  restart: unless-stopped
+  ports:
+   - "25:25"
+  environment:
+    RELAY_NETWORKS: ":192.168.0.0/16:172.16.0.0/12:10.0.0.0/8"
+    GMAIL_USER:
+    GMAIL_PASSWORD:
+    SES_USER:
+    SES_PASSWORD:
+    SES_REGION:
+    RELAY_DOMAINS:
+    KEY_PATH:
+    CERTIFICATE_PATH:
+    MAILNAME:
