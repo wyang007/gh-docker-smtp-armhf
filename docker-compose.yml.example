@@ -2,6 +2,7 @@ version: '2'
 services:
  smtp:
   build: .
+  image: laouache/gh-docker-smtp-armhf:latest
   restart: unless-stopped
   ports:
    - "25:25"
