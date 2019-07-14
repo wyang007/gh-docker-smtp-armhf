@@ -1,9 +1,10 @@
-FROM lsiobase/xenial.armhf
+#FROM lsiobase/xenial.armhf
+FROM resin/rpi-raspbian:latest
 
-MAINTAINER laouache "gh-laouache@tovar.fr"
+MAINTAINER laouache "yangw"
 
 RUN apt-get update && \
-    apt-get install -y exim4-daemon-light && \
+    apt-get install -y exim4-daemon-light iproute2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     find /var/log -type f | while read f; do echo -ne '' > $f; done;
