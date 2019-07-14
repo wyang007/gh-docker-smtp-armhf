@@ -1,3 +1,6 @@
+#!/bin/sh
+
+# to use this relay, please set in Google Account to allow "Less secure app access" (under Security)
 docker run -d -p 25:25 \
            -e RELAY_NETWORKS=":192.168.1.0/24" -e DISABLE_IPV6="yes" \
            -e GMAIL_USER="mygmail-account" -e GMAIL_PASSWORD="mygmail-password" \
